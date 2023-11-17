@@ -14,18 +14,24 @@ export default function ResetPassword() {
    function handleResetPassword(event: React.FormEvent<HTMLFormElement>) {
       event.preventDefault();
       const data = new FormData(event.currentTarget);
-      const { new_password } = Object.fromEntries(data);
+      const { new_password, confirm_password } = Object.fromEntries(data);
 
-      if (token !== null && tokenId !== null) {
-         try {
-            app.emailPasswordAuth.resetPassword({ token, tokenId, password: new_password.toString() }).then((res) => {
-               setResetPasswordStatus({ type: 'success', message: 'Successfully reset password!' });
-            });
-         }
-         catch (err) {
-            setResetPasswordStatus({ type: 'error', message: 'Error resetting password' });
+      if (new_password !== confirm_password) {
+         setResetPasswordStatus({ type: 'error', message: 'Password does not match' });
+      } else {
+         if (token !== null && tokenId !== null) {
+            try {
+               app.emailPasswordAuth.resetPassword({ token, tokenId, password: new_password.toString() }).then((res) => {
+                  setResetPasswordStatus({ type: 'success', message: 'Successfully reset password!' });
+               });
+            }
+            catch (err) {
+               setResetPasswordStatus({ type: 'error', message: 'Error resetting password' });
+            }
          }
       }
+
+
    }
    return (
       <ThemeProvider theme={theme}>
