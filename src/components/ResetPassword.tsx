@@ -1,18 +1,31 @@
-import { Box, Button, Grid, Paper, TextField, Typography, Link, ThemeProvider } from '@mui/material'
-import React from 'react'
+import { Box, Button, Grid, Paper, TextField, Typography, Link, ThemeProvider, Alert } from '@mui/material'
+import React, { useState } from 'react'
 import { theme } from '../utils/Theme';
 import { app } from '../App';
 
 
 export default function ResetPassword() {
+   const [resetPasswordStatus, setResetPasswordStatus] = useState<AlertMessageType | undefined>();
+
+   const params = new URLSearchParams(window.location.search); //getting the query params
+   const token = params.get('token'); //getting the token from query params
+   const tokenId = params.get('tokenId'); //getting the tokenId from query params
 
    function handleResetPassword(event: React.FormEvent<HTMLFormElement>) {
       event.preventDefault();
       const data = new FormData(event.currentTarget);
-      const { email } = Object.fromEntries(data);
-      app.emailPasswordAuth.sendResetPasswordEmail({ email: email.toString() }).then((res) => {
-         console.log(res);
-      });
+      const { new_password } = Object.fromEntries(data);
+
+      if (token !== null && tokenId !== null) {
+         try {
+            app.emailPasswordAuth.resetPassword({ token, tokenId, password: new_password.toString() }).then((res) => {
+               setResetPasswordStatus({ type: 'success', message: 'Successfully reset password!' });
+            });
+         }
+         catch (err) {
+            setResetPasswordStatus({ type: 'error', message: 'Error resetting password' });
+         }
+      }
    }
    return (
       <ThemeProvider theme={theme}>
@@ -49,7 +62,7 @@ export default function ResetPassword() {
                         fullWidth
                         id="new_password"
                         label="New Password"
-                        name="password"
+                        name="new_password"
                         type="password"
                         autoFocus
                      />
@@ -62,6 +75,9 @@ export default function ResetPassword() {
                         type="password"
                         id="confirm_password"
                      />
+                     {resetPasswordStatus &&
+                        <Alert severity={resetPasswordStatus.type}>{resetPasswordStatus.message}</Alert>
+                     }
                      <Button
                         type="submit"
                         fullWidth
