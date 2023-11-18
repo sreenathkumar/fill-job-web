@@ -16,22 +16,26 @@ export default function ResetPassword() {
       const data = new FormData(event.currentTarget);
       const { new_password, confirm_password } = Object.fromEntries(data);
 
-      if (new_password !== confirm_password) {
-         setResetPasswordStatus({ type: 'error', message: 'Password does not match' });
-      } else {
-         if (token !== null && tokenId !== null) {
-            try {
-               app.emailPasswordAuth.resetPassword({ token, tokenId, password: new_password.toString() }).then((res) => {
-                  setResetPasswordStatus({ type: 'success', message: 'Successfully reset password!' });
-               });
+      if (new_password === confirm_password) {
+         if (new_password.toString().length > 6) {
+            if (token !== null && tokenId !== null) {
+               try {
+                  app.emailPasswordAuth.resetPassword({ token, tokenId, password: new_password.toString() }).then((res) => {
+                     setResetPasswordStatus({ type: 'success', message: 'Successfully reset password!' });
+                     console.log('res', res);
+                  });
+               }
+               catch (error) {
+                  console.log('err', error);
+                  setResetPasswordStatus({ type: 'error', message: 'Error resetting password' });
+               }
             }
-            catch (err) {
-               setResetPasswordStatus({ type: 'error', message: 'Error resetting password' });
-            }
+         } else {
+            setResetPasswordStatus({ type: 'error', message: 'Password must be at least 6 characters' });
          }
+      } else {
+         setResetPasswordStatus({ type: 'error', message: 'Password does not match' });
       }
-
-
    }
    return (
       <ThemeProvider theme={theme}>
