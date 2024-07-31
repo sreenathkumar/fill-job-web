@@ -5,6 +5,7 @@ import RootLayout from "./components/ui/RootLayout";
 import JobProfile from "./components/JobProfile";
 import MyAccount from "./components/MyAccount";
 import ResetPassword from "./components/ResetPassword";
+import ThankYou from "./components/ThankYou";
 
 export const router = createBrowserRouter([
    {
@@ -16,7 +17,8 @@ export const router = createBrowserRouter([
          { path: "signin", element: <SignIn /> },
          { path: "job-profile", element: <JobProfile /> },
          { path: "my-account", element: <MyAccount /> },
-         { path: "reset-password", element: <ResetPassword /> }
+         { path: "reset-password", element: <ResetPassword /> },
+         { path: "thank-you", element: <ThankYou /> }
       ]
    },
 ])
